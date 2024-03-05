@@ -63,7 +63,7 @@ class TokenResource(Resource):
     @api.expect(token_model, validate=True)
     def post(self):
         token = auth_service.api_authenticate(request.json)
-        return create_access_token(identity=token), 200
+        return {'access_token': token}, 200
 
         
 
