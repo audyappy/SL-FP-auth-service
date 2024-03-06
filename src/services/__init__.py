@@ -1,2 +1,2 @@
 from .auth import AuthService
-from .requests import RequestsService
+from .http_client import HttpClient

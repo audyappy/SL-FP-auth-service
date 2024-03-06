@@ -18,7 +18,7 @@ class AuthService:
         api_key_in = data['api_key']
         if api_key_in != self.api_key:
             raise UnauthorizedException('Api key is invalid')
-        return create_access_token(identity=api_key_in, additional_claims={'roles': ['api']})
+        return create_access_token(identity=api_key_in, additional_claims={'roles': ['api', 'user']})
     
     def get_user_token(self, user:User):
         """
