@@ -3,8 +3,7 @@ FROM python:3.9-slim
 WORKDIR /app
 
 COPY ./src ./src
-COPY .env .env
-COPY ./data ./data
+COPY .env-deploy .env
 
 RUN pip install --no-cache-dir -r src/requirements.txt
 
