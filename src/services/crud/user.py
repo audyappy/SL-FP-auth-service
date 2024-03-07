@@ -1,13 +1,14 @@
 from typing import Any
 import os
 from werkzeug.security import generate_password_hash
+from requests.exceptions import RequestException
 
 from .base import CRUDService
 from ..auth import AuthService
 from ..http_client import HttpClient
 from ...models import User
 from ...schemas import user_schema
-from ...exceptions import BadRequestToExternalService
+
 
 class UserService(CRUDService):
     def __init__(self):
@@ -18,14 +19,15 @@ class UserService(CRUDService):
         backend_service_api_key = os.environ.get('BACKEND_SERVICE_API_KEY')
         self.backend_requests_service = HttpClient(backend_service_url, backend_service_api_key)
         
-    def create_user_in_backend(self, data)->Any:
+    def create_or_update_user_in_backend(self, data)->Any:
         """
-        creates a new user in backend service
+        creates a new user in backend service if user does not exist
         """
         username = data['username']
         email = data['email']
         json_data = {'username': username, 'email': email}
-        self.backend_requests_service.post('/users/', data=json_data)
+        
+        res =self.backend_requests_service.post('/users/', data=json_data)
 
     
     def register(self, data)->Any:
@@ -33,7 +35,7 @@ class UserService(CRUDService):
         creates a new user both in auth and backend services and returns a token
         returns (user, token) tuple
         """
-        self.create_user_in_backend(data)
+        self.create_or_update_user_in_backend(data)
         user = self.create(data)
         token = self.auth_service.get_user_token(user)
         return user, token

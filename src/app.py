@@ -1,3 +1,6 @@
+import logging.config
+logger = logging.getLogger(__name__)
+
 from flask import Flask, jsonify, request
 import os
 import dotenv
@@ -5,12 +8,17 @@ from flask_restx import Api
 from flask_jwt_extended import JWTManager
 from marshmallow.exceptions import ValidationError
 
+
 from .models import db
-from .utils import set_db_uri
+from .utils import set_db_uri, create_directories
+from .log_config import LOGGING_CONFIG
 from .api.namespaces import add_namespace
 from .exceptions import ServiceException
 
+create_directories()
+logging.config.dictConfig(LOGGING_CONFIG)
 dotenv.load_dotenv()
+
 
 app = Flask(__name__)
 app.config['ERROR_404_HELP'] = False
@@ -34,6 +42,7 @@ set_db_uri(app, os.environ['DATABASE_FILE_NAME'])
 @app.errorhandler(ServiceException)
 def handle_service_exception(error):
     """Handle ServiceException and its subclasses."""
+    logger.info(f"{error.__class__.__name__}: {error.message}")
     response = jsonify(error.to_dict())
     response.status_code = error.status_code
     return response

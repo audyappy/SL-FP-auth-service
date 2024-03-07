@@ -38,9 +38,9 @@ class InvalidPassword(ServiceException):
     def __init__(self, message="Invalid password"):
         super().__init__(message, status_code=401)
         
-class BadRequestToExternalService(ServiceException):
-    def __init__(self, message="Bad request to external service"):
-        super().__init__(message, status_code=400)
+# class BadRequestToExternalService(ServiceException):
+#     def __init__(self, message="Bad request to external service"):
+#         super().__init__(message, status_code=400)
 
 class CannotConnectToExternalService(ServiceException):
     def __init__(self, message="Cannot connect to external service"):
